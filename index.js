@@ -110,38 +110,150 @@ const users = [
   },
 ];
 
-// 1. Afficher tous les noms et prénoms des utilisateurs.
+// 1. Tous les noms et prénoms
+const nomsPrenoms = users.map((user) => `${user.prenom} ${user.nom}`);
+console.log(nomsPrenoms);
 
-// 2. Lister tous les emails des utilisateurs.
+// 2. Tous les emails
 
-// 3. Afficher le rôle de chaque utilisateur.
+const emails = users.map((user) => user.email);
+console.log(emails);
 
-// 4. Combien y a-t-il d'utilisateurs au total ?
+// 3. Rôle de chaque utilisateur
+const roles = users.map((user) => user.role);
+console.log(roles);
 
-// 5. Combien d'utilisateurs sont administrateurs ?
+// 4. Nombre total d'users
+const totalusers = users.length;
+console.log(totalusers);
 
-// 6. Lister les utilisateurs qui sont actifs.
-// 7. Trouver tous les utilisateurs inscrits après le 15 janvier 2025.
+// 5. Nombre d'administrateurs
+const nbAdmins = users.filter((user) => user.role === "administrateur").length;
+console.log(nbAdmins);
 
-// 8. Afficher les noms complets des utilisateurs ayant des employés.
+// 6. users actifs
+const usersActifs = users.filter((user) => user.estActif);
+console.log(usersActifs);
 
-// 9. Combien d’utilisateurs ont au moins un employé ?
+// 7. Inscrits après le 15 janvier 2025
+const apres15Janvier = users.filter(
+  (user) => new Date(user.dateInscription) > new Date("2025-01-15")
+);
+console.log(apres15Janvier);
 
-// 10. Trouver l'utilisateur dont l’email est emilie.lemoine@example.com.
+// 8. Noms complets des users avec employés
+const avecEmployes = users
+  .filter((user) => user.employees?.length > 0)
+  .map((user) => `${user.prenom} ${user.nom}`);
+console.log(avecEmployes);
 
-// 11. Afficher le nombre total d’employés.
+// 9. Nombre d'users avec employés
+const nbAvecEmployes = users.filter(
+  (user) => user.employees?.length > 0
+).length;
+console.log(nbAvecEmployes);
 
-// 12. Afficher le nombre d’utilisateurs par rôle.
+// 10. Trouver Emilie
+const emilie = users.find(
+  (user) => user.email === "emilie.lemoine@example.com"
+);
+console.log(emilie);
 
-// 13. Créer un tableau contenant pour chaque utilisateur : nom complet, rôle, nombre d’employés.
-// 14. Afficher une liste de tous les employés avec le nom complet de leur responsable.
+// ✅ Niveau confirmé
 
-// 15. Trier les utilisateurs par date d’inscription (du plus ancien au plus récent).
-// 15. Trier les utilisateurs par nom.
-// 16. Créer un objet de résumé avec les clés : totalUtilisateurs, totalActifs, totalInactifs, totalEmployes.
-// 17. Créer un tableau contenant uniquement les noms des employés des administrateurs.
-// 18. Créer un tableau trié par nombre d’employés, avec pour chaque utilisateur : nom complet, rôle, nombre d’employés.
+// 11. Nombre total d’employés
+const totalEmployes = users.reduce((acc, user) => {
+  return acc + (user.employees ? user.employees.length : 0);
+}, 0);
+console.log("Total employés :", totalEmployes);
 
-// 19. Y a-t-il au moins un utilisateur inactif ? (utiliser some)
-// 20. Tous les utilisateurs sont-ils actifs ? (utiliser every)
-// 21. Ajouter un employé à l'utilisateur dont l'id est 4 (Rousseau Antoine).
+// 12. Nombre d’users par rôle
+const usersParRole = users.reduce((acc, user) => {
+  acc[user.role] = (acc[user.role] || 0) + 1;
+  return acc;
+}, {});
+console.log("users par rôle :", usersParRole);
+
+// 13. Nom complet, rôle, nombre d’employés
+const resumeusers = users.map((user) => ({
+  nomComplet: `${user.prenom} ${user.nom}`,
+  role: user.role,
+  nbEmployes: user.employees ? user.employees.length : 0,
+}));
+console.log("Résumé :", resumeusers);
+
+// 14. Liste de tous les employés avec le nom complet du responsable
+const listeEmployes = users.flatMap((user) => {
+  return (
+    user.employees?.map((emp) => ({
+      nomEmploye: emp.name,
+      description: emp.description,
+      responsable: `${user.prenom} ${user.nom}`,
+    })) || []
+  );
+});
+console.log("Employés avec responsable :", listeEmployes);
+
+// 🔥 Niveau avancé
+
+// 15. Trier les users par date d’inscription (ancien -> récent)
+const triDate = [...users].sort(
+  (a, b) => new Date(a.dateInscription) - new Date(b.dateInscription)
+);
+//  tri par nom
+const triName = [...users].sort((a, b) => a.nom.localeCompare(b.nom));
+console.log("Tri par nom :", triName);
+
+// 16. Objet résumé général
+const resumeGlobal = {
+  totalusers: users.length,
+  totalActifs: users.filter((u) => u.estActif).length,
+  totalInactifs: users.filter((u) => !u.estActif).length,
+  totalEmployes: users.reduce(
+    (acc, user) => acc + (user.employees?.length || 0),
+    0
+  ),
+};
+console.log("Résumé global :", resumeGlobal);
+
+// 17. Noms des employés des administrateurs
+const employesAdmins = users
+  .filter((user) => user.role === "administrateur")
+  .flatMap((admin) => admin.employees?.map((e) => e.name) || []);
+console.log("Employés des admins :", employesAdmins);
+
+// 18. users triés par nombre d’employés
+const triParEmployes = [...users]
+  .map((user) => ({
+    nomComplet: `${user.prenom} ${user.nom}`,
+    role: user.role,
+    nbEmployes: user.employees?.length || 0,
+  }))
+  .sort((a, b) => b.nbEmployes - a.nbEmployes);
+console.log("Tri par nb employés :", triParEmployes);
+
+// 19. ajouter un employe à l'utilisateur qui a l'id 4
+const usermiag = user.map((user) => {
+  if (user.id == 4) {
+    const newemploye = {
+      id: 4,
+      nom: "Lemoine",
+      prenom: "Emilie",
+    };
+    const newemplyes = user?.employees ?? [];
+    return { ...user, employes: [...newemplyes, newemploye] };
+  } else {
+    return user;
+  }
+});
+// 20  y'a til aumoins un utilisateur actif ?
+
+const auMoinsUnInactif = utilisateurs.some((user) => !user.estActif);
+console.log("Y a-t-il au moins un utilisateur inactif ?", auMoinsUnInactif);
+
+// 21. Utilisateurs avec un nom de famille commençant par "L"
+const utilisateursL = utilisateurs.filter((user) => user.nom.startsWith("L"));
+
+//  22 Tous les utilisateurs sont-ils actifs ?
+const tousActifs = utilisateurs.every((user) => user.estActif);
+console.log("Tous les utilisateurs sont-ils actifs ?", tousActifs);
